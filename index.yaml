@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  static-serve:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-11-14T07:06:01.206606243Z"
+    description: Helm chart scaffolding for static files + Nginx Unit applications.
+    digest: e4b2e3ac81fac762645d709570d24edf0bcc0989a106afa51e6aff03d098cdb4
+    name: static-serve
+    type: application
+    urls:
+    - https://github.com/jd1378/helm-charts/releases/download/static-serve-1.0.0/static-serve-1.0.0.tgz
+    version: 1.0.0
+generated: "2022-11-14T07:06:01.206772242Z"
