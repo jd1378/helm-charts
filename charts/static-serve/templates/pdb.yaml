@@ -1,0 +1,19 @@
+{{- if or (and .Values.autoscaling.enabled (gt (.Values.autoscaling.minReplicas | int) 1)) (gt (.Values.replicaCount | int) 1) -}}
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  labels:
+    {{- include "static-serve.labels" . | nindent 4 }}
+  name: {{ include "static-serve.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "static-serve.selectorLabels" . | nindent 6 }}
+      static-serve/pod-type: web
+  {{- if .Values.pdb.minAvailable }}
+  minAvailable: {{ .Values.pdb.minAvailable }}
+  {{- end }}
+  {{- if .Values.pdb.maxUnavailable }}
+  maxUnavailable: {{ .Values.pdb.maxUnavailable }}
+  {{- end }}
+{{- end }}

@@ -1,0 +1,35 @@
+name: Release Charts
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    name: Release Charts
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          git config --local user.name "$GITHUB_ACTOR"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v1.1
+        with:
+          version: v3.10.1
+
+      - name: Release Chart
+        uses: helm/chart-releaser-action@v1.4.1
+        with:
+          config: chart-releaser.yaml
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_SKIP_EXISTING: true

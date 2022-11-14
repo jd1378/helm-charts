@@ -1,0 +1,148 @@
+# Default values for helm chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+strategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 0
+  #   maxUnavailable: 1
+
+nameOverride: ""
+fullnameOverride: ""
+imagePullSecrets: []
+
+# Configure Nginx Unit + Static Files container.
+app:
+  image:
+    repository: javadmnjd/static-serve-demo
+    pullPolicy: IfNotPresent
+    tag: "1.0.0"
+
+  # Specify the Secret name to pull the .env file from.
+  # If not specified, it defaults to "{release name}-env". It should
+  # be a secret that contains an ".env" data key with the full
+  # .env file that will be copied during pod creation.
+  # The secret should be created by you before running the app.
+  # envSecretName: ""
+
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  # Extra environment variables for the app container.
+  extraEnv:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+
+  # Extra volumes to mount on the container.
+  extraVolumeMounts: []
+  # - name: some-folder
+  #   mountPath: /some/path
+
+  # Configure the HTTP healthcheck
+  # If enabled, ensure the given path
+  # returns a 200 OK when accessed.
+  healthcheck:
+    enabled: true
+    period: 5
+    path: /
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+  annotations: {}
+  # Set annotations for the service.
+
+ingress:
+  enabled: true
+  # annotations:
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  class: "nginx"
+  hosts:
+    - host: test.nonexistingdomain.com
+      paths:
+        - /
+  tls: []
+  # - secretName: chart-example-tls
+  #   hosts:
+  #     - chart-example.local
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+  behavior: {}
+  # Set the behavior for the autoscaler.
+  # https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/#support-for-configurable-scaling-behavior
+
+  # Custom Metrics will be appended to the default CPU/Memory resources (if they're enabled).
+  customMetrics: []
+  # - type: Pods
+  #   pods:
+  #     metric:
+  #       name: phpfpm_process_utilization
+  #     target:
+  #       type: AverageValue
+  #       averageValue: "50"
+
+pdb:
+  enabled: true
+  minAvailable: 1
+  # maxUnavailable: 25%
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Extra volumes to attach to the deployment.
+extraVolumes: []
+# - name: some-folder
+#   emptyDir: {}
+
+# Extra containers to run in the deployment.
+extraContainers: []
+
+# Extra init containers to run in the deployment.
+extraInitContainers: []
