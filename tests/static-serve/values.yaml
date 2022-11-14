@@ -21,13 +21,6 @@ app:
     pullPolicy: IfNotPresent
     tag: "1.0.0"
 
-  # Specify the Secret name to pull the .env file from.
-  # If not specified, it defaults to "{release name}-env". It should
-  # be a secret that contains an ".env" data key with the full
-  # .env file that will be copied during pod creation.
-  # The secret should be created by you before running the app.
-  # envSecretName: ""
-
   resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -120,7 +113,7 @@ autoscaling:
   # - type: Pods
   #   pods:
   #     metric:
-  #       name: phpfpm_process_utilization
+  #       name: process_utilization
   #     target:
   #       type: AverageValue
   #       averageValue: "50"

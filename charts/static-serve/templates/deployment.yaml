@@ -27,12 +27,6 @@ spec:
         static-serve/pod-type: web
     spec:
       volumes:
-        - name: env
-          secret:
-            secretName: {{ if .Values.app.envSecretName }} {{ .Values.app.envSecretName }} {{ else }} {{ .Release.Name }}-env {{ end }}
-        - name: php-ini-config
-          configMap:
-            name: {{ if .Values.phpIni.configName }} {{ .Values.phpIni.configName }} {{ else }} {{ .Release.Name }}-php-ini-config {{ end }}
         {{- with .Values.extraVolumes }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -63,12 +57,6 @@ spec:
           image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.app.image.pullPolicy }}
           volumeMounts:
-            - name: env
-              mountPath: /var/www/.env
-              subPath: .env
-            - name: php-ini-config
-              mountPath: /usr/local/etc/php/php.ini
-              subPath: php.ini
             {{- with .Values.app.extraVolumeMounts }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -96,49 +84,6 @@ spec:
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-
-
-        {{- if .Values.scheduler.enabled }}
-        - name: scheduler
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-          command:
-            {{- toYaml .Values.scheduler.command | nindent 12 }}
-          volumeMounts:
-            - name: env
-              mountPath: /var/www/.env
-              subPath: .env
-            - name: php-ini-config
-              mountPath: /usr/local/etc/php/php.ini
-              subPath: php.ini
-            {{- with .Values.app.extraVolumeMounts }}
-            {{- toYaml . | nindent 12 }}
-            {{- end }}
-          {{- if .Values.scheduler.healthcheck.enabled }}
-          readinessProbe:
-            exec:
-              command:
-                - php
-                - -v
-            initialDelaySeconds: {{ .Values.scheduler.healthcheck.period }}
-            periodSeconds: {{ .Values.scheduler.healthcheck.period }}
-          livenessProbe:
-            exec:
-              command:
-                - php
-                - -v
-            initialDelaySeconds: {{ .Values.scheduler.healthcheck.period }}
-            periodSeconds: {{ .Values.scheduler.healthcheck.period }}
-          {{- end }}
-          resources:
-            {{- toYaml .Values.scheduler.resources | nindent 12 }}
-          {{- with .Values.app.extraEnv }}
-          env:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-        {{- end }}
 
 
       {{- with .Values.nodeSelector }}
