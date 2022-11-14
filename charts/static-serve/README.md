@@ -5,7 +5,7 @@
 
 # Nginx Unit + Static Files Helm Chart
 
-Containerize & Orchestrate your static websites with this simple Helm chart.
+Containerize & Orchestrate your static websites with this simple Helm chart
 
 ## Requirements
 
